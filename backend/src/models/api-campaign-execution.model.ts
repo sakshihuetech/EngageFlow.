@@ -1,0 +1,19 @@
+import mongoose, { Schema, type InferSchemaType, type Model } from 'mongoose';
+const media = new Schema({ type: { type: String, enum: ['IMAGE','VIDEO','DOCUMENT'] }, url: { type: String, trim: true, maxlength: 2048 }, filename: { type: String, trim: true, maxlength: 240 } }, { _id: false });
+const schema = new Schema({
+  workspaceId: { type: Schema.Types.ObjectId, ref: 'Workspace', required: true }, apiCampaignId: { type: Schema.Types.ObjectId, ref: 'ApiCampaign', required: true },
+  campaignSlug: { type: String, required: true, trim: true }, destination: { type: String, required: true, trim: true }, contactId: { type: Schema.Types.ObjectId, ref: 'Contact' }, apiCredentialId: { type: Schema.Types.ObjectId, ref: 'ApiCredential' },
+  requestFingerprint: { type: String, required: true, trim: true, select: false }, idempotencyKey: { type: String, required: true, trim: true, maxlength: 160 },
+  resolvedTemplateParams: { type: [String], default: [] }, userName: { type: String, trim: true, maxlength: 160 }, tags: { type: [String], default: [] }, source: { type: String, trim: true, maxlength: 120 }, attributes: { type: Schema.Types.Mixed, default: {} }, media,
+  status: { type: String, enum: ['RECEIVED','QUEUED','SENDING','ACCEPTED','SENT','DELIVERED','READ','FAILED','SKIPPED','REJECTED'], default: 'RECEIVED', required: true }, attempts: { type: Number, default: 0, min: 0 },
+  whatsappMessageId: { type: Schema.Types.ObjectId, ref: 'WhatsAppMessage' }, metaMessageId: { type: String, trim: true }, failureCode: { type: String, trim: true, maxlength: 64 }, failureTitle: { type: String, trim: true, maxlength: 300 }, failureMessage: { type: String, trim: true, maxlength: 1000 },
+  failureCategory: { type: String, enum: ['VALIDATION','META_PERMANENT','META_TRANSIENT','QUEUE_SYSTEM','RETRY_EXHAUSTED'] }, failureSource: { type: String, enum: ['META_WEBHOOK'] }, retrySafety: { type: String, enum: ['SAFE','PERMANENT','UNCERTAIN'], default: 'UNCERTAIN' }, retryExhausted: { type: Boolean, default: false }, queueJobId: { type: String, trim: true, maxlength: 120 },
+  senderAccountId: { type: Schema.Types.ObjectId, ref: 'WhatsAppAccount' }, senderPhoneNumberId: { type: String, trim: true }, senderTemplateId: { type: Schema.Types.ObjectId, ref: 'WhatsAppTemplate' },
+  nextEligibleRetryAt: Date, retryRestriction: { type: String, enum: ['PROVIDER_WAIT_UNKNOWN'] }, retryRequestedAt: Date, retryRequestKey: { type: String, trim: true, maxlength: 160 }, retryMode: { type: String, enum: ['MANUAL','AUTO'] }, retrySequence: { type: Number, default: 0, min: 0 }, submissionState: { type: String, enum: ['NOT_SUBMITTED','SUBMITTING','ACCEPTED','UNCERTAIN'], default: 'NOT_SUBMITTED' }, failureSubcode: Number,
+  attemptHistory: { type: [new Schema({ attempt: Number, at: Date, status: String, messageId: String, failureCode: String, failureSubcode: Number, failureTitle: String, failureMessage: String, retrySafety: String }, { _id: false })], default: [] },
+  receivedAt: { type: Date, default: Date.now, required: true }, queuedAt: Date, acceptedAt: Date, sentAt: Date, deliveredAt: Date, readAt: Date, failedAt: Date,
+}, { timestamps: true, collection: 'apicampaignexecutions' });
+schema.index({ workspaceId: 1, apiCampaignId: 1, idempotencyKey: 1 }, { unique: true });
+schema.index({ workspaceId: 1, apiCampaignId: 1, status: 1, _id: -1 }); schema.index({ workspaceId: 1, apiCampaignId: 1, _id: -1 }); schema.index({ workspaceId: 1, metaMessageId: 1 }, { sparse: true }); schema.index({ status: 1, updatedAt: 1 });
+export type ApiCampaignExecutionDocument = InferSchemaType<typeof schema>;
+export const ApiCampaignExecution = (mongoose.models.ApiCampaignExecution as Model<ApiCampaignExecutionDocument> | undefined) ?? mongoose.model<ApiCampaignExecutionDocument>('ApiCampaignExecution', schema);

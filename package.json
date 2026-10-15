@@ -1,0 +1,17 @@
+{
+  "name": "engageflow",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "dev:frontend": "npm run dev --workspace frontend",
+    "dev:backend": "npm run dev --workspace backend",
+    "build": "npm run build --workspace frontend && npm run build --workspace backend",
+    "lint": "npm run lint --workspace frontend && npm run lint --workspace backend",
+    "test": "npm run test --workspace frontend && npm run test --workspace backend",
+    "check": "npm run lint && npm run test && npm run build"
+  }
+}

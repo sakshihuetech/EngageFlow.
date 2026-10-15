@@ -1,0 +1,41 @@
+{
+  "name": "@engageflow/backend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "campaign:worker": "tsx src/workers/campaign.worker.ts",
+    "api-campaign:worker": "tsx src/workers/api-campaign.worker.ts",
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/server.js",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint .",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "bullmq": "^6.3.11",
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.5",
+    "express": "^5.2.1",
+    "ioredis": "^6.0.0",
+    "mongoose": "^9.10.3",
+    "multer": "^2.4.0",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/multer": "^2.3.0",
+    "@types/node": "^26.6.4",
+    "@types/supertest": "^7.2.1",
+    "eslint": "^10.11.0",
+    "globals": "^17.13.0",
+    "supertest": "^7.3.0",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "typescript-eslint": "^8.71.0",
+    "vitest": "^4.1.11"
+  }
+}

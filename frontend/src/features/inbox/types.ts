@@ -1,0 +1,5 @@
+export interface InboxConversation { id: string; contactId?: string; customerPhone: string; customerName?: string; status: 'OPEN' | 'CLOSED'; lastInboundAt?: string; lastMessageAt: string; lastMessagePreview: string; unreadCount: number; serviceWindowOpen: boolean; serviceWindowExpiresAt?: string; }
+export interface InboxMessage { id: string; conversationId: string; direction: 'INBOUND' | 'OUTBOUND'; source: string; messageType: string; text: string; mediaMetadata?: Record<string, unknown>; messageId: string; contextMessageId?: string; status: 'RECEIVED' | 'ACCEPTED' | 'SENT' | 'DELIVERED' | 'READ' | 'FAILED'; timestamp: string; failureCode?: string; failureTitle?: string; failureMessage?: string; }
+export interface InboxContact { id: string; name: string; phoneE164: string; status: string; tags: string[]; attributes: Record<string, unknown>; whatsappConsent: { status: string; source?: string }; }
+export interface InboxThread { conversation: InboxConversation; contact: InboxContact | null; items: InboxMessage[]; nextCursor: string | null; }
+export interface CursorPage<T> { items: T[]; nextCursor: string | null; }
